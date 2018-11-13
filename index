@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset='utf-8'>
+	<title>title</title>
+	<style>
+		body{
+			margin:0;
+		}
+	</style>
+
+</head>
+<body>
+
+<div id="div1" style="height:100vh; width:50%; float:left"></div>
+<div id="div2" style="height:50vh; width:50%;  float:left;"></div>
+<div id="div3" style="height:50vh; width:50%; float:left;"></div>
+
+
+<script src="js/build/three.js"></script>
+<script>
+
+let rot = [0,0,0]; // rotacja
+let pos = [0,0,0]; // pozycja 
+let slonce_rot = [0,0,0]; // pozycja slonca
+let pojazd_pos = [0,0,0];	// pozycja slonca
+
+document.addEventListener("keydown",onDocumentKeyDown, false);
+
+let scene = new THREE.Scene();
+
+// KAMERY ------------------------------------------------------------------------
+
+let camera1 = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+let camera2 = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+let camera3 = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+//////////////////////////////////////////////////////////////////////////////////
+
+// RENDERER -----------------------------------------------------------------
+
+let divR1 = document.getElementById('div1');
+let divR2 = document.getElementById('div2');
+let divR3 = document.getElementById('div3');
+
+
+let renderer = new THREE.WebGLRenderer();
+let renderer2 = new THREE.WebGLRenderer();
+let renderer3 = new THREE.WebGLRenderer();
+
+renderer.setSize(window.innerWidth/2,window.innerHeight);
+renderer.setClearColor(new THREE.Color(0x404040));
+
+renderer2.setSize(window.innerWidth/2,window.innerHeight/2);
+renderer2.setClearColor(new THREE.Color(0x404040));
+
+renderer3.setSize(window.innerWidth/2,window.innerHeight/2);
+renderer3.setClearColor(new THREE.Color(0x404040));
+
+divR1.appendChild(renderer.domElement);
+divR2.appendChild(renderer2.domElement);
+divR3.appendChild(renderer3.domElement);
+
+//////////////////////////////////////////////////////////////////////////////////
+
+// GEOMETRIE -------------------------------------------------------------------
+
+
+let geometry_budynek1 = new THREE.Geometry();
+let geometry_budynek2 = new THREE.Geometry();
+let geometry_drzewo1 = new THREE.Geometry();
+let geometry_drzewo2 = new THREE.Geometry();
+let geometry_drzewo3 = new THREE.Geometry();
+
+let geometry_jezdnia = new THREE.Geometry();
+let trawa1 = new THREE.Geometry();
+let trawa2 = new THREE.Geometry();
+
+
+/////////////////////////////////////////////////////////////////////////////////
+
+let alfa = 0;
+let rozmiar = 4;
+
+let material = new THREE.MeshBasicMaterial({ vertexColors: THREE.FaceColors });
+
+material.side = THREE.DoubleSide;
+
+
+function rysujBudynki( x , min, max , geom, rozmiar, c1, c2){
+	for(let i=0; i<=rozmiar; i++){
+	alfa = (i*2*Math.PI)/rozmiar;
+	geom.vertices.push(new THREE.Vector3(Math.sin(alfa)*x, Math.cos(alfa)*x, min));
+
+	let face = new THREE.Face3(0,i,i+1);		
+	face.color.set(c1);
+	geom.faces.push(face);
+}
+
+for(let i=rozmiar+1; i<=2*rozmiar+1; i++){
+	alfa = (2*i*Math.PI)/rozmiar;
+	geom.vertices.push(new THREE.Vector3(Math.sin(alfa)*x, Math.cos(alfa)*x, max));
+	
+	let face = new THREE.Face3(rozmiar+1,i+1,i+2);		
+	face.color.set(c1);
+	geom.faces.push(face);
+
+}
+// sciany w jedna strone
+for(let i=0; i<=rozmiar; i++){
+	
+	let face = new THREE.Face3(i,i+rozmiar,i+1);		
+	face.color.set(c2);
+	geom.faces.push(face);
+
+}
+
+// sciany w druga
+for(let i=2; i<=rozmiar; i++){
+	
+	let face = new THREE.Face3(i,i+rozmiar,rozmiar+i-1);		
+	face.color.set(c1);
+	geom.faces.push(face);
+	if(i==rozmiar){
+		face = new THREE.Face3(rozmiar,1,rozmiar+1);		
+		face.color.set(c1);
+		geom.faces.push(face);
+	}
+
+}
+
+}
+
+
+// slonce -----------------------------------------------------------------
+
+let slonce_geometry = new THREE.SphereGeometry( 5, 32, 32 );
+var slonce_material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+var slonce = new THREE.Mesh( slonce_geometry, slonce_material );
+scene.add( slonce );
+
+slonce.position.x = -25;
+slonce.position.y = 15;
+slonce.position.z = 32;
+
+
+
+
+////////////////////////////////////////////////////////////////////////////
+
+
+
+// drzewo 1 ---------------------------------------------------------
+
+rysujBudynki(0.5, 0, 10 , geometry_drzewo1, 10, 0x800000, 0x800000);
+
+
+let drzewo1 = new THREE.Mesh(geometry_drzewo1,material);
+drzewo1.position.x = 12;
+drzewo1.position.y = -15;
+scene.add(drzewo1);
+
+var sphere_geometry1 = new THREE.SphereGeometry( 7, 32, 32 );
+var sphere_material1 = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+var sphere1 = new THREE.Mesh( sphere_geometry1, sphere_material1 );
+scene.add( sphere1 );
+
+sphere1.position.x = 12;
+sphere1.position.y = -15;
+sphere1.position.z = 15;
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+// drzewo 2 ---------------------------------------------------------
+
+rysujBudynki(0.5, 0, 7 , geometry_drzewo2, 10, 0x800000, 0x800000);
+
+
+let drzewo2 = new THREE.Mesh(geometry_drzewo2,material);
+drzewo2.position.x = -15;
+drzewo2.position.y = -15;
+scene.add(drzewo2);
+
+
+var sphere_geometry2 = new THREE.SphereGeometry( 5, 32, 32 );
+var sphere_material2 = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+var sphere2 = new THREE.Mesh( sphere_geometry2, sphere_material2 );
+scene.add( sphere2 );
+
+sphere2.position.x = -15;
+sphere2.position.y = -15;
+sphere2.position.z = 10;
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+
+// drzewo 3 ---------------------------------------------------------
+
+rysujBudynki(0.5, 0, 7 , geometry_drzewo3, 10, 0x800000, 0x800000);
+
+
+let drzewo3 = new THREE.Mesh(geometry_drzewo3,material);
+drzewo3.position.x = -15;
+drzewo3.position.y = 18;
+scene.add(drzewo3);
+
+
+var sphere_geometry3 = new THREE.SphereGeometry( 5, 32, 32 );
+var sphere_material3 = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+var sphere3 = new THREE.Mesh( sphere_geometry3, sphere_material3 );
+scene.add( sphere3 );
+
+sphere3.position.x = -15;
+sphere3.position.y = 18;
+sphere3.position.z = 10;
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+// czlowiek ---------------------------------------------------------
+
+let czlowiek_geometry = new THREE.Geometry();
+
+rysujBudynki(0.5, 0, 3 , czlowiek_geometry, 10, 0xff9966, 0xff9966);
+
+
+
+let czlowiek = new THREE.Mesh(czlowiek_geometry,material);
+czlowiek.position.x = -7;
+czlowiek.position.y = -25;
+scene.add(czlowiek);
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+//////////jezdnia -------------------------------------------
+
+let x = 8;
+let y = 30;
+
+geometry_jezdnia.vertices.push(new THREE.Vector3(-x, -y, 0));
+geometry_jezdnia.vertices.push(new THREE.Vector3(3, -y, 0));
+geometry_jezdnia.vertices.push(new THREE.Vector3(-x, y, 0));
+
+geometry_jezdnia.vertices.push(new THREE.Vector3(3, y, 0));
+geometry_jezdnia.vertices.push(new THREE.Vector3(3, -y, 0));
+geometry_jezdnia.vertices.push(new THREE.Vector3(-x, y, 0));
+
+
+let face_jezdnia1 = new THREE.Face3(0,1,2);
+face_jezdnia1.color.set(0x000000);
+
+let face_jezdnia2 = new THREE.Face3(3,4,5);
+face_jezdnia2.color.set(0x000000);
+
+geometry_jezdnia.faces.push(face_jezdnia1);
+geometry_jezdnia.faces.push(face_jezdnia2);
+
+
+let jezdnia_obj = new THREE.Mesh(geometry_jezdnia,material);
+
+jezdnia_obj.position.x = 2;
+jezdnia_obj.position.y = 1;
+jezdnia_obj.position.z = 0;
+
+scene.add(jezdnia_obj);
+
+////////////////////////////////////////////////////////////////////
+
+
+///trawa -----------------------------------------------------------
+
+let a = 30;
+let b = 30;
+
+trawa1.vertices.push(new THREE.Vector3(-a, -b, -0.01));
+trawa1.vertices.push(new THREE.Vector3(a, -b, -0.01));
+trawa1.vertices.push(new THREE.Vector3(-a, b, -0.01));
+
+trawa1.vertices.push(new THREE.Vector3(a, b, -0.01));
+trawa1.vertices.push(new THREE.Vector3(a, -b, -0.01));
+trawa1.vertices.push(new THREE.Vector3(-a, b, -0.01));
+
+
+let face_trawa1 = new THREE.Face3(0,1,2);
+face_trawa1.color.set(0xa0f0a0);
+
+let face_trawa2 = new THREE.Face3(3,4,5);
+face_trawa2.color.set(0xa0f0a0);
+
+
+
+trawa1.faces.push(face_trawa1);
+trawa1.faces.push(face_trawa2);
+
+
+let trawa1_obj1 = new THREE.Mesh(trawa1,material);
+
+
+trawa1_obj1.position.x = -6;
+trawa1_obj1.position.y = 1;
+trawa1_obj1.position.z = 0;
+scene.add(trawa1_obj1);
+
+////////////////////////////////////////////////////////////////////////
+
+
+// pasy na ziemi -------------------------------------------
+for(let i=0; i< 11; i++){
+	var g = new THREE.BoxGeometry( 0.5, 3, 0.01 );
+	var p = new THREE.Mesh( g, material );
+	p.position.y = 5*i - 25;
+	p.position.x = 0;
+	scene.add( p );
+}
+/////////////////////////////////////////////////
+
+
+////  auto1 //-----------------------------------------------------
+let pojazd1_geometry= new THREE.BoxGeometry( 2, 2, 2 );
+let pojazd1_material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+let pojazd1 = new THREE.Mesh( pojazd1_geometry, pojazd1_material );
+
+
+scene.add( pojazd1 );
+
+
+pojazd1.position.y = -26;
+pojazd1.position.x = 3;
+pojazd1.position.z = 2;
+
+
+//////////////////////////////////////////////////////////
+
+
+////  auto2 //-----------------------------------------------------
+let pojazd2_geometry= new THREE.BoxGeometry( 2, 2, 2 );
+let pojazd2_material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+let pojazd2 = new THREE.Mesh( pojazd2_geometry, pojazd2_material );
+
+
+scene.add( pojazd2 );
+
+
+pojazd2.position.y = 25;
+pojazd2.position.x = -2;
+pojazd2.position.z = 2;
+
+
+//////////////////////////////////////////////////////////
+
+//// 1 budynek //---------------------------------------------
+
+
+
+rysujBudynki(3, 0, 20, geometry_budynek1, 4, 0xff00f0, 0xffa000);
+
+let budynek1 = new THREE.Mesh(geometry_budynek1,material);
+budynek1.position.x = -12;
+budynek1.position.y = 3;
+scene.add(budynek1);
+
+//var axesHelper = new THREE.AxesHelper( 5 );
+//scene.add( axesHelper );
+
+function rysujOkna(ile){
+	for(let i = 0; i < ile; i++){
+		let mat = new THREE.MeshBasicMaterial({ color: 0x66ccff });
+		var g = new THREE.BoxGeometry( 2, 2, 0.01 );
+		var p = new THREE.Mesh( g, mat );
+		p.position.y = 2;
+		p.position.x = -10;
+		p.position.z = 17-5*i;
+		p.rotation.x = Math.PI/2;
+		p.rotation.y = Math.PI/4;
+		scene.add( p );
+	}
+}
+
+rysujOkna(3);
+
+////////////////////////////////////////////////////////////////
+
+//----- 2 budynek -----------------------------------------
+
+rysujBudynki(4, 0, 15 , geometry_budynek2, 4 , 0xff00f0, 0x0000ff);
+
+let budynek2 = new THREE.Mesh(geometry_budynek2,material);
+budynek2.position.x = 12;
+budynek2.position.y = 3;
+scene.add(budynek2);
+
+//////////////////////////////////////////////////////////
+
+
+// kamery ---------------------------------------------------
+
+rot[0] = Math.PI/2;
+
+
+camera1.position.x = 3;
+camera1.position.y = -28;
+camera1.position.z = 4;
+
+
+
+camera2.position.x = 10;
+camera2.position.z = 20;
+camera2.position.y = 5;
+
+camera3.position.x = 10;
+camera3.position.y = 30;
+camera3.position.z = 10;
+
+
+camera1.lookAt(scene.position);
+camera2.lookAt(scene.position);
+camera3.lookAt(scene.position);
+
+movement();
+renderScene();
+
+
+/////////////////////////////////////////////////////////////////////////
+
+function renderScene(){
+
+
+	camera1.position.y = pos[1]-28;
+	camera1.position.z = pos[2]+4;
+
+
+	camera1.rotation.x = rot[0];
+	camera1.rotation.y = rot[1];
+	camera1.rotation.z = rot[2];
+
+	camera2.rotation.z = rot[2] + Math.PI/2;
+
+	camera3.rotation.z = rot[0] + Math.PI/2;
+
+	pojazd1.position.y = pos[1]-26;
+	pojazd2.position.y = pojazd_pos[2]+25;
+	
+	slonce.position.x = slonce_rot[1]-25;
+
+	czlowiek.position.y = slonce_rot[2] - 25;
+
+	renderer.render(scene,camera1);
+	renderer2.render(scene,camera2);
+	renderer3.render(scene,camera3);
+}
+
+function onDocumentKeyDown(event){
+
+	let key = event.which;
+	
+	if(key == 'a'.charCodeAt(0) || key == 'A'.charCodeAt(0) ){
+		rot[1] +=  Math.PI/40;
+	}
+
+	else if(key == 'd'.charCodeAt(0) || key == 'D'.charCodeAt(0) ){
+		rot[1] -= Math.PI/40;
+	}
+
+	else if(key == 'w'.charCodeAt(0) || key == 'W'.charCodeAt(0) ){
+			pos[1] += 0.5;
+			if(pojazd1.position.y>28){
+				pos[1] = 0;
+			}
+	}
+
+	else if(key == 's'.charCodeAt(0) || key == 'S'.charCodeAt(0) ){
+		pos[1] -= 0.5;
+	}
+
+	else if(key == 'z'.charCodeAt(0) || key == 'Z'.charCodeAt(0) ){
+		rot[2] -= Math.PI/40;
+	}
+
+	else if(key == 'x'.charCodeAt(0) || key == 'X'.charCodeAt(0) ){
+		rot[2] += Math.PI/40;
+	}
+
+	else if(key == 'r'.charCodeAt(0) || key == 'R'.charCodeAt(0) ){
+		rot[0] -= Math.PI/40;
+	}
+
+	else if(key == 't'.charCodeAt(0) || key == 'T'.charCodeAt(0) ){
+		rot[0] += Math.PI/40;
+	}
+
+	else if(key == 32 ){
+		rot[0] = rot[1] = rot[2] = 0;
+	}
+
+	renderScene(camera1);
+	renderScene(camera2);
+	renderScene(camera3);
+
+}
+
+function movement(){
+	requestAnimationFrame(movement);
+
+	slonce_rot[1]+=0.02;	// ruch slonca 
+	slonce_rot[2] += 0.02; // ruch czlowieka, zeby nie robic 2 tablicy uzylem tej
+	pojazd_pos[2] -= 0.1;
+
+	if(slonce_rot[1]>50){
+		slonce_rot[1] = -20;
+	}
+
+	if(slonce_rot[2]>50){
+		slonce_rot[2] = -7;
+	}
+
+	if(pojazd_pos[2] < -50){
+		pojazd_pos[2] = 5;
+	}
+	
+	renderScene();
+}
+
+
+
+</script>
+
+</body>
+</html>
