@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset='utf-8'>
+	<title>Title</title>
+	<style>
+		body{
+			margin:0;
+		}
+	</style>
+
+</head>
+<body>
+
+<script src="js/build/three.js"></script>
+<script>
+
+let rot=[0,0,0];
+
+document.addEventListener("keydown",onDocumentKeyDown, false);
+
+let scene = new THREE.Scene();
+let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+let renderer = new THREE.WebGLRenderer();
+
+renderer.setSize(window.innerWidth,window.innerHeight);
+
+renderer.setClearColor(new THREE.Color(0x404040));
+
+document.body.appendChild(renderer.domElement);
+
+let geometry = new THREE.Geometry();
+let geometry2 = new THREE.Geometry();
+let geometry3 = new THREE.Geometry();
+
+let alfa = 0;
+let rozmiar = 20;
+
+var axesHelper = new THREE.AxesHelper( 5 );
+scene.add( axesHelper );
+
+
+function rysujWalce( x , min, max , geom){
+	for(let i=0; i<=rozmiar; i++){
+	alfa = (i*2*Math.PI)/rozmiar;
+	geom.vertices.push(new THREE.Vector3(Math.sin(alfa)*x, Math.cos(alfa)*x, min));
+
+	let face = new THREE.Face3(0,i,i+1);		
+	face.color.set(0xffa000);
+	geom.faces.push(face);
+}
+
+for(let i=rozmiar+1; i<=2*rozmiar+1; i++){
+	alfa = (2*i*Math.PI)/rozmiar;
+	geom.vertices.push(new THREE.Vector3(Math.sin(alfa)*x, Math.cos(alfa)*x, max));
+	
+	let face = new THREE.Face3(rozmiar+1,i+1,i+2);		
+	face.color.set(0xffa000);
+	geom.faces.push(face);
+
+}
+// sciany w jedna strone
+for(let i=0; i<=rozmiar; i++){
+	
+	let face = new THREE.Face3(i,i+rozmiar,i+1);		
+	face.color.set(0xf0f0f0);
+	geom.faces.push(face);
+
+}
+
+// sciany w druga
+for(let i=2; i<=rozmiar; i++){
+	
+	let face = new THREE.Face3(i,i+rozmiar,rozmiar+i-1);		
+	face.color.set(0xff0000);
+	geom.faces.push(face);
+	if(i==rozmiar){
+		face = new THREE.Face3(rozmiar,1,rozmiar+1);		
+		face.color.set(0xff0000);
+		geom.faces.push(face);
+	}
+
+}
+
+}
+
+rysujWalce(0.3 , 0, 2, geometry);
+rysujWalce(1, 2, 2.5 , geometry2);
+
+
+// stozek -----------------------------------------------------------------------
+
+geometry3.vertices.push(new THREE.Vector3(0,0,-0.5));
+for(let i=0; i<=rozmiar; i++){
+	alfa = (i*2*Math.PI)/rozmiar;
+	geometry3.vertices.push(new THREE.Vector3(Math.sin(alfa)*0.3, Math.cos(alfa)*0.3, 0));
+
+}
+
+for(let i=0; i<=rozmiar; i++){
+	let face = new THREE.Face3(0,i,i+1);		
+	face.color.set(0xffa000);
+	geometry3.faces.push(face);
+}
+
+
+// ----------------------------------------------------------------------------
+
+
+let material = new THREE.MeshBasicMaterial({ vertexColors: THREE.FaceColors });
+
+material.side = THREE.DoubleSide;
+
+
+let triangles = new THREE.Mesh(geometry,material);
+let triangles2 = new THREE.Mesh(geometry2,material);
+let triangles3 = new THREE.Mesh(geometry3,material);
+
+scene.add(triangles);
+scene.add(triangles2);
+scene.add(triangles3);
+
+camera.position.z = 6;
+
+camera.lookAt(scene.position);
+
+renderScene();
+
+
+function renderScene(){
+
+	triangles.rotation.x = rot[0];
+	triangles.rotation.y = rot[1];
+	triangles.rotation.z = rot[2];
+
+	triangles2.rotation.x = rot[0];
+	triangles2.rotation.y = rot[1];
+	triangles2.rotation.z = rot[2];
+
+	triangles3.rotation.x = rot[0];
+	triangles3.rotation.y = rot[1];
+	triangles3.rotation.z = rot[2];
+
+	renderer.render(scene,camera);
+}
+
+function onDocumentKeyDown(event){
+
+	let key = event.which;
+	
+	if(key == 'a'.charCodeAt(0) || key == 'A'.charCodeAt(0) ){
+		rot[1] -= 0.05;
+	}
+
+	else if(key == 'd'.charCodeAt(0) || key == 'D'.charCodeAt(0) ){
+		rot[1] += 0.05;
+	}
+
+	else if(key == 'w'.charCodeAt(0) || key == 'W'.charCodeAt(0) ){
+		rot[0] += 0.05;
+	}
+
+	else if(key == 's'.charCodeAt(0) || key == 'S'.charCodeAt(0) ){
+		rot[0] -= 0.05;
+	}
+
+	else if(key == 'z'.charCodeAt(0) || key == 'Z'.charCodeAt(0) ){
+		rot[2] -= 0.05;
+	}
+
+	else if(key == 'x'.charCodeAt(0) || key == 'X'.charCodeAt(0) ){
+		rot[2] += 0.05;
+	}
+
+	else if(key == 'q'.charCodeAt(0) || key == 'Q'.charCodeAt(0) ){
+		rozmiar += 1;
+	}
+
+	else if(key == 32 ){
+		rot[0] = rot[1] = rot[2] = 0;
+	}
+
+	renderScene();
+}
+/*
+function animate() {
+				requestAnimationFrame( animate );
+				triangles.rotation.x += 0.005;
+				triangles.rotation.y += 0.001;
+				renderer.render( scene, camera );
+			}
+
+
+animate();*/
+
+
+</script>
+
+</body>
+</html>
