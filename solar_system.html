@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset='utf-8'>
+	<title>Title</title>
+	<style>
+		body{
+			margin:0;
+		}
+	</style>
+
+</head>
+<body>
+
+<script src="js/build/three.js"></script>
+<script src="my.js"></script>
+<script>
+
+
+let scene = new THREE.Scene();
+let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+let renderer = new THREE.WebGLRenderer();
+
+renderer.setSize(window.innerWidth,window.innerHeight);
+
+renderer.setClearColor(new THREE.Color(0x404040));
+
+document.body.appendChild(renderer.domElement);
+
+let axes = new THREE.AxesHelper(10);
+scene.add(axes);
+
+let pivot_ziemia,pivot_merkury,pivot_ksiezyc;
+
+let light = new THREE.PointLight( 0xffffff, 2, 100 );
+light.position.set( 0, 4, 10 );
+scene.add( light );
+
+
+let slonce_geometry = new THREE.SphereGeometry(3,25,25);
+let slonce_material = new THREE.MeshStandardMaterial({ color: 0xffff00 });
+let slonce = new THREE.Mesh(slonce_geometry,slonce_material);
+slonce_material.side = THREE.DoubleSide;
+scene.add(slonce);
+
+
+
+
+let merkury_geometry = new THREE.SphereGeometry(1.5,25,25);
+let merkury_material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+let merkury = new THREE.Mesh(merkury_geometry,merkury_material);
+merkury_material.side = THREE.DoubleSide;
+merkury.position.x = 10;
+
+let wenus_geometry = new THREE.SphereGeometry(1.5,25,25);
+let wenus_material = new THREE.MeshStandardMaterial({ color: 0xffa000 });
+let wenus = new THREE.Mesh(wenus_geometry,wenus_material);
+wenus_material.side = THREE.DoubleSide;
+wenus.position.x = 20;
+
+let ziemia_geometry = new THREE.SphereGeometry(1.5,25,25);
+let ziemia_material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+let ziemia = new THREE.Mesh(ziemia_geometry,ziemia_material);
+ziemia_material.side = THREE.DoubleSide;
+ziemia.position.x = 30;
+
+let ksiezyc_geometry = new THREE.SphereGeometry(0.5,25,25);
+let ksiezyc_material = new THREE.MeshStandardMaterial({ color: 0x0000ff });
+let ksiezyc = new THREE.Mesh(ksiezyc_geometry,ksiezyc_material);
+ksiezyc_material.side = THREE.DoubleSide;
+ksiezyc.position.x = 0;
+ksiezyc.position.y = 3;
+
+
+// czolg ------------------------------------------------------------------------------
+
+let kadlub = new THREE.Group();
+let lufa = new THREE.Group();
+
+let pojazd1 = new THREE.Group();
+czolg2(kadlub,lufa);
+
+pojazd1.add(kadlub);
+pojazd1.add(lufa);
+scene.add(pojazd1);
+
+pojazd1.position.x = 40;
+
+pivot_czolg = new THREE.Object3D();
+slonce.add(pivot_czolg);
+pivot_czolg.add(pojazd1);
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+
+pivot_merkury = new THREE.Object3D();
+pivot_wenus = new THREE.Object3D();
+pivot_ziemia = new THREE.Object3D();
+pivot_ksiezyc = new THREE.Object3D();
+
+
+slonce.add(pivot_merkury);
+slonce.add(pivot_wenus);
+slonce.add(pivot_ziemia);
+ziemia.add(pivot_ksiezyc);
+
+
+pivot_merkury.add(merkury);
+pivot_wenus.add(wenus);
+pivot_ziemia.add(ziemia);
+pivot_ksiezyc.add(ksiezyc);
+
+
+
+// orbity ---------------------------------------------------------------------------
+
+let iloscOrbit = 5;
+
+for(let i = 0 ; i < iloscOrbit ; i++){
+	let orbit_geometry = new THREE.TorusGeometry( i*10, 0.05, 16, 100 );
+	let orbit_material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+
+	let orbit = new THREE.Mesh( orbit_geometry, orbit_material );
+	scene.add( orbit );
+
+	orbit.rotation.x = Math.PI/2;
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+
+camera.position.z = 55;
+camera.position.y = 20;
+
+
+
+document.addEventListener("keydown",onDocumentKeyDown, false);
+
+let rot = [0,0,0];
+
+//camera.lookAt(scene.position);
+move();
+
+function move(){
+	requestAnimationFrame(move);
+
+	pivot_ziemia.rotation.y += 0.03;
+	
+	pivot_merkury.rotation.y += 0.07;
+
+	pivot_wenus.rotation.y += 0.05;
+	
+	pivot_ksiezyc.rotation.x += 0.07;
+	
+	pivot_ksiezyc.rotation.y += 0.03;
+
+
+	pivot_czolg.rotation.y += 0.05;
+
+	//pojazd1.rotation.y += 0.01;
+
+
+	camera.rotation.x = rot[0] - Math.PI/8;
+	camera.rotation.y = rot[1];
+	camera.rotation.z = rot[2];
+
+	renderer.render(scene,camera);
+
+
+}
+
+function onDocumentKeyDown(event){
+
+	let key = event.which;
+	
+	if(key == 'a'.charCodeAt(0) || key == 'A'.charCodeAt(0) ){
+		rot[1] +=  Math.PI/40;
+	}
+
+	else if(key == 'd'.charCodeAt(0) || key == 'D'.charCodeAt(0) ){
+		rot[1] -= Math.PI/40;
+	}
+
+	else if(key == 'w'.charCodeAt(0) || key == 'W'.charCodeAt(0) ){
+		rot[0] += Math.PI/40;
+	}
+
+	else if(key == 's'.charCodeAt(0) || key == 'S'.charCodeAt(0) ){
+		rot[0] -= Math.PI/40;
+	}
+
+	else if(key == 'z'.charCodeAt(0) || key == 'Z'.charCodeAt(0) ){
+		rot[2] -= Math.PI/40;
+	}
+
+	else if(key == 'x'.charCodeAt(0) || key == 'X'.charCodeAt(0) ){
+		rot[2] += Math.PI/40;
+	}
+
+
+	else if(key == 32 ){
+		rot[0] = rot[1] = rot[2] = 0;
+	}
+
+	renderScene();
+
+}
+
+
+
+</script>
+
+</body>
+</html>
