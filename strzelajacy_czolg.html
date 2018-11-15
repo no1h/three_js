@@ -607,7 +607,10 @@ function renderScene(){
 
 	pojazd1.position.y = pos[1]-26;
 	pojazd2.position.y = pojazd_pos[2]+25;
+	
+	pocisk_group.position.x = pocisk_pos[0];
 	pocisk_group.position.y = pocisk_pos[1]-26;
+	pocisk_group.position.z = pocisk_pos[2];
 	
 	//light1.position.x = slonce_rot[1]-25;
 	//pivot_slonce.rotation.x = slonce_rot[0];
@@ -618,7 +621,9 @@ function renderScene(){
 	renderer3.render(scene,camera3);
 }
 
-
+let angle_x = 0;
+let angle_y = 1;
+let angle_z = 0;
 
 function onDocumentKeyDown(event){
 
@@ -626,17 +631,23 @@ function onDocumentKeyDown(event){
 	
 	if(key == 'a'.charCodeAt(0) || key == 'A'.charCodeAt(0) ){
 		rot[1] +=  Math.PI/40;
+		angle_x = (-1*rot[1])+0.2;
+		angle_z += 0.2;
 		//pojazd1.rotation.z += Math.PI/40;
 	}
 
 	else if(key == 'd'.charCodeAt(0) || key == 'D'.charCodeAt(0) ){
 		rot[1] -= Math.PI/40;
+		rot[1] -= Math.PI/40;
+		angle_x = -1*rot[1];
+		angle_z -= 0.2;
 		//pojazd1.rotation.z -= Math.PI/40;
 	}
 
 	else if(key == 'w'.charCodeAt(0) || key == 'W'.charCodeAt(0) ){
 			pos[1] += 0.5;
 			pocisk_pos[1] += 0.5;
+			angle_y = rot[0];
 			if(pojazd1.position.y>28){
 				pos[1] = 0;
 			}
@@ -645,6 +656,7 @@ function onDocumentKeyDown(event){
 	else if(key == 's'.charCodeAt(0) || key == 'S'.charCodeAt(0) ){
 		pos[1] -= 0.5;
 		pocisk_pos[1] -= 0.5;
+		angle_y = rot[0];
 	}
 
 	else if(key == 'z'.charCodeAt(0) || key == 'Z'.charCodeAt(0) ){
@@ -679,10 +691,13 @@ let check = false;
 function strzal(){
 	if(!check) requestAnimationFrame(strzal);	
 	
-	pocisk_pos[1] += 0.5;
+	pocisk_pos[1] += angle_y/2;
+	pocisk_pos[0] += angle_x;
+	pocisk_pos[2] = angle_z;
 	
 	if(pocisk_pos[1] > 55){
 		pocisk_pos[1] = pos[1]-1;
+		pocisk_pos[0] = 0;
 		check = true;
 	}
 }
