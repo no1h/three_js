@@ -8,10 +8,34 @@
 		body{
 			margin:0;
 		}
+		#licznik {
+			position: absolute;
+			top: 10px;
+			width: 100%;
+			text-align: center;
+			font-weight: bold;
+			font-size: 30px;
+			z-index: 100;
+			display:block;
+		}
+
+		#czas {
+			position: absolute;
+			top: 50px;
+			width: 100%;
+			text-align: center;
+			font-weight: bold;
+			font-size: 20px;
+			z-index: 100;
+			display:block;
+		}
 	</style>
 
 </head>
 <body>
+
+<div id="licznik"></div>
+<div id="czas"></div>
 
 <script src="../js/build/three.js"></script>
 <script src="../js/build/OrbitControls.js"></script>
@@ -31,9 +55,6 @@ let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeigh
 let controls = new THREE.OrbitControls(camera);
 camera.position.set( 0, 5, 15 );
 controls.update();
-
-let axes = new THREE.AxesHelper(10);
-scene.add(axes);
 
 let skyboxGeometry = new THREE.CubeGeometry(100,100,100);
 
@@ -109,19 +130,36 @@ let tab = [];
 	
 		spaceZ += 0.05;
 	}
-		
+
+
+let ruchy = 0;
+let sec = 0;
+
+
 function clear(){
-	for(let i=1; i<30; i++){
+	for(let i=1; i<27; i++){
 		tab[i].rotation.x = 0;
 		tab[i].rotation.y = 0;
 		tab[i].rotation.z = 0;
 	}
+	ruchy = 0;
+	sec = 0;
 }
+
+function czas(){
+	requestAnimationFrame(czas);
+	sec++;
+	
+	document.getElementById("czas").innerHTML = "Czas: " + Math.floor(sec/60) + " s";
+}
+
+		
+
+czas();
 
 
 
 renderScene();
-
 
 
 function renderScene(){
@@ -129,12 +167,17 @@ function renderScene(){
 	requestAnimationFrame(renderScene);
 	
 	
+	document.getElementById("licznik").innerHTML = "Wykonane ruchy: "+ruchy;
+	
+
 	controls.update();
 	
 	
 
 	renderer.render(scene,camera);
 }
+
+
 
 function onDocumentKeyDown(event){
 
@@ -143,123 +186,132 @@ function onDocumentKeyDown(event){
 	if(key == 'a'.charCodeAt(0) || key == 'A'.charCodeAt(0) ){
 		// lewa
 		
-		tab[1].rotation.x += Math.PI/2;
-		tab[4].rotation.x += Math.PI/2;
-		tab[7].rotation.x += Math.PI/2;
-		tab[10].rotation.x += Math.PI/2;
-		tab[13].rotation.x += Math.PI/2;
-		tab[16].rotation.x += Math.PI/2;
-		tab[19].rotation.x += Math.PI/2;
-		tab[22].rotation.x += Math.PI/2;
-		tab[25].rotation.x += Math.PI/2;
+		tab[1].rotation.x += Math.PI/4;
+		tab[4].rotation.x += Math.PI/4;
+		tab[7].rotation.x += Math.PI/4;
+		tab[10].rotation.x += Math.PI/4;
+		tab[13].rotation.x += Math.PI/4;
+		tab[16].rotation.x += Math.PI/4;
+		tab[19].rotation.x += Math.PI/4;
+		tab[22].rotation.x += Math.PI/4;
+		tab[25].rotation.x += Math.PI/4;
+		ruchy++;
 
 	}
 
 	else if(key == 'd'.charCodeAt(0) || key == 'D'.charCodeAt(0) ){
 		// prawa
-		tab[3].rotation.x += Math.PI/2;
-		tab[6].rotation.x += Math.PI/2;
-		tab[9].rotation.x += Math.PI/2;
-		tab[12].rotation.x += Math.PI/2;
-		tab[15].rotation.x += Math.PI/2;
-		tab[18].rotation.x += Math.PI/2;
-		tab[21].rotation.x += Math.PI/2;
-		tab[24].rotation.x += Math.PI/2;
-		tab[27].rotation.x += Math.PI/2;
+		tab[3].rotation.x += Math.PI/4;
+		tab[6].rotation.x += Math.PI/4;
+		tab[9].rotation.x += Math.PI/4;
+		tab[12].rotation.x += Math.PI/4;
+		tab[15].rotation.x += Math.PI/4;
+		tab[18].rotation.x += Math.PI/4;
+		tab[21].rotation.x += Math.PI/4;
+		tab[24].rotation.x += Math.PI/4;
+		tab[27].rotation.x += Math.PI/4;
+		ruchy++;
 	}
 
 	else if(key == 'e'.charCodeAt(0) || key == 'E'.charCodeAt(0) ){
 		// przod
 
-		tab[19].rotation.z += Math.PI/2;
-		tab[20].rotation.z += Math.PI/2;
-		tab[21].rotation.z += Math.PI/2;
-		tab[22].rotation.z += Math.PI/2;
-		tab[23].rotation.z += Math.PI/2;
-		tab[24].rotation.z += Math.PI/2;
-		tab[25].rotation.z += Math.PI/2;
-		tab[26].rotation.z += Math.PI/2;
-		tab[27].rotation.z += Math.PI/2;
+		tab[19].rotation.z += Math.PI/4;
+		tab[20].rotation.z += Math.PI/4;
+		tab[21].rotation.z += Math.PI/4;
+		tab[22].rotation.z += Math.PI/4;
+		tab[23].rotation.z += Math.PI/4;
+		tab[24].rotation.z += Math.PI/4;
+		tab[25].rotation.z += Math.PI/4;
+		tab[26].rotation.z += Math.PI/4;
+		tab[27].rotation.z += Math.PI/4;
+		ruchy++;
 	}
 
 	else if(key == 'q'.charCodeAt(0) || key == 'Q'.charCodeAt(0) ){
 		// tyl
-		tab[1].rotation.z += Math.PI/2;
-		tab[2].rotation.z += Math.PI/2;
-		tab[3].rotation.z += Math.PI/2;
-		tab[4].rotation.z += Math.PI/2;
-		tab[5].rotation.z += Math.PI/2;
-		tab[6].rotation.z += Math.PI/2;
-		tab[7].rotation.z += Math.PI/2;
-		tab[8].rotation.z += Math.PI/2;
-		tab[9].rotation.z += Math.PI/2;
+		tab[1].rotation.z += Math.PI/4;
+		tab[2].rotation.z += Math.PI/4;
+		tab[3].rotation.z += Math.PI/4;
+		tab[4].rotation.z += Math.PI/4;
+		tab[5].rotation.z += Math.PI/4;
+		tab[6].rotation.z += Math.PI/4;
+		tab[7].rotation.z += Math.PI/4;
+		tab[8].rotation.z += Math.PI/4;
+		tab[9].rotation.z += Math.PI/4;
+		ruchy++;
 	}
 
 	else if(key == 'w'.charCodeAt(0) || key == 'W'.charCodeAt(0) ){
 		// srodek na wprost
-		tab[2].rotation.x += Math.PI/2;
-		tab[5].rotation.x += Math.PI/2;
-		tab[8].rotation.x += Math.PI/2;
-		tab[11].rotation.x += Math.PI/2;
-		tab[14].rotation.x += Math.PI/2;
-		tab[17].rotation.x += Math.PI/2;
-		tab[20].rotation.x += Math.PI/2;
-		tab[23].rotation.x += Math.PI/2;
-		tab[26].rotation.x += Math.PI/2;
+		tab[2].rotation.x += Math.PI/4;
+		tab[5].rotation.x += Math.PI/4;
+		tab[8].rotation.x += Math.PI/4;
+		tab[11].rotation.x += Math.PI/4;
+		tab[14].rotation.x += Math.PI/4;
+		tab[17].rotation.x += Math.PI/4;
+		tab[20].rotation.x += Math.PI/4;
+		tab[23].rotation.x += Math.PI/4;
+		tab[26].rotation.x += Math.PI/4;
+		ruchy++;
 		
 	}
 
 	else if(key == 'z'.charCodeAt(0) || key == 'Z'.charCodeAt(0) ){
 		//dol
-		tab[1].rotation.y += Math.PI/2;
-		tab[2].rotation.y += Math.PI/2;
-		tab[3].rotation.y += Math.PI/2;
-		tab[10].rotation.y += Math.PI/2;
-		tab[11].rotation.y += Math.PI/2;
-		tab[12].rotation.y += Math.PI/2;
-		tab[19].rotation.y += Math.PI/2;
-		tab[20].rotation.y += Math.PI/2;
-		tab[21].rotation.y += Math.PI/2;
+		tab[1].rotation.y += Math.PI/4;
+		tab[2].rotation.y += Math.PI/4;
+		tab[3].rotation.y += Math.PI/4;
+		tab[10].rotation.y += Math.PI/4;
+		tab[11].rotation.y += Math.PI/4;
+		tab[12].rotation.y += Math.PI/4;
+		tab[19].rotation.y += Math.PI/4;
+		tab[20].rotation.y += Math.PI/4;
+		tab[21].rotation.y += Math.PI/4;
+		ruchy++;
 	
 	}
 
 	else if(key == 'c'.charCodeAt(0) || key == 'C'.charCodeAt(0) ){
 		// gora
-		tab[7].rotation.y += Math.PI/2;
-		tab[8].rotation.y += Math.PI/2;
-		tab[9].rotation.y += Math.PI/2;
-		tab[16].rotation.y += Math.PI/2;
-		tab[17].rotation.y += Math.PI/2;
-		tab[18].rotation.y += Math.PI/2;
-		tab[25].rotation.y += Math.PI/2;
-		tab[26].rotation.y += Math.PI/2;
-		tab[27].rotation.y += Math.PI/2;
+		tab[7].rotation.y += Math.PI/4;
+		tab[8].rotation.y += Math.PI/4;
+		tab[9].rotation.y += Math.PI/4;
+		tab[16].rotation.y += Math.PI/4;
+		tab[17].rotation.y += Math.PI/4;
+		tab[18].rotation.y += Math.PI/4;
+		tab[25].rotation.y += Math.PI/4;
+		tab[26].rotation.y += Math.PI/4;
+		tab[27].rotation.y += Math.PI/4;
+		ruchy++;
 	}
 
 	else if(key == 'x'.charCodeAt(0) || key == 'X'.charCodeAt(0) ){
 		// srodek w prawo lewo
-		tab[4].rotation.y += Math.PI/2;
-		tab[5].rotation.y += Math.PI/2;
-		tab[6].rotation.y += Math.PI/2;
-		tab[13].rotation.y += Math.PI/2;
-		tab[14].rotation.y += Math.PI/2;
-		tab[15].rotation.y += Math.PI/2;
-		tab[22].rotation.y += Math.PI/2;
-		tab[23].rotation.y += Math.PI/2;
-		tab[24].rotation.y += Math.PI/2;
+		tab[4].rotation.y += Math.PI/4;
+		tab[5].rotation.y += Math.PI/4;
+		tab[6].rotation.y += Math.PI/4;
+		tab[13].rotation.y += Math.PI/4;
+		tab[14].rotation.y += Math.PI/4;
+		tab[15].rotation.y += Math.PI/4;
+		tab[22].rotation.y += Math.PI/4;
+		tab[23].rotation.y += Math.PI/4;
+		tab[24].rotation.y += Math.PI/4;
+		ruchy++;
 	}
 
 	else if(key == 's'.charCodeAt(0) || key == 'S'.charCodeAt(0) ){
 		// srodek na wprost-1
-		tab[2].rotation.x -= Math.PI/2;
-		tab[5].rotation.x -= Math.PI/2;
-		tab[8].rotation.x -= Math.PI/2;
-		tab[11].rotation.x -= Math.PI/2;
-		tab[14].rotation.x -= Math.PI/2;
-		tab[17].rotation.x -= Math.PI/2;
-		tab[20].rotation.x -= Math.PI/2;
-		tab[23].rotation.x -= Math.PI/2;
-		tab[26].rotation.x -= Math.PI/2;
+		tab[2].rotation.x -= Math.PI/4;
+		tab[5].rotation.x -= Math.PI/4;
+		tab[8].rotation.x -= Math.PI/4;
+		tab[11].rotation.x -= Math.PI/4;
+		tab[14].rotation.x -= Math.PI/4;
+		tab[17].rotation.x -= Math.PI/4;
+		tab[20].rotation.x -= Math.PI/4;
+		tab[23].rotation.x -= Math.PI/4;
+		tab[26].rotation.x -= Math.PI/4;
+		ruchy++;
 	}
 
 	else if(key == 'r'.charCodeAt(0) || key == 'R'.charCodeAt(0) ){
