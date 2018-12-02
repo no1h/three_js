@@ -29,6 +29,19 @@
 			z-index: 100;
 			display:block;
 		}
+
+		#info {
+			position: absolute;
+			top: 50px;
+			width: 100%;
+			text-align: left;
+			font-weight: bold;
+			font-size: 20px;
+			margin-left: 20px;
+			color: red;
+			z-index: 100;
+			display:block;
+		}
 	</style>
 
 </head>
@@ -36,6 +49,18 @@
 
 <div id="licznik"></div>
 <div id="czas"></div>
+<div id="info">
+	<h1>Sterowanie: </h1>
+	<p> D - Prawa strona </p>
+	<p> A - Lewa strona </p>
+	<p> W - Środek w pionie </p>
+	<p> C - Góra </p>
+	<p> X - Środek w poziomie </p>
+	<p> Z - Dół </p>
+	<p> E - Przód </p>
+	<p> Q - Tył </p>
+
+</div>
 
 <script src="../js/build/three.js"></script>
 <script src="../js/build/OrbitControls.js"></script>
@@ -53,7 +78,7 @@ document.body.appendChild(renderer.domElement);
 let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
 
 let controls = new THREE.OrbitControls(camera);
-camera.position.set( 0, 5, 15 );
+camera.position.set( 10, 10, 15 );
 controls.update();
 
 let skyboxGeometry = new THREE.CubeGeometry(100,100,100);
